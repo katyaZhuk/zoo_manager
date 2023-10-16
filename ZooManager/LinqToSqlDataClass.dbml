@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="SqlTutorialDB" Class="LinqToSqlDataClassDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=DESKTOP-O8DQOKU\SQLTUTORIAL;Initial Catalog=SqlTutorialDB;Persist Security Info=True;User ID=sa;Pooling=False" SettingsObjectName="ZooManager.Properties.Settings" SettingsPropertyName="SqlTutorialDBConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.Animal" Member="Animals">
+    <Type Name="Animal">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="Animal_AnimalZoo" Member="AnimalZoos" ThisKey="Id" OtherKey="AnimalId" Type="AnimalZoo" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AnimalZoo" Member="AnimalZoos">
+    <Type Name="AnimalZoo">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="ZooId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="AnimalId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Animal_AnimalZoo" Member="Animal" ThisKey="AnimalId" OtherKey="Id" Type="Animal" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="Zoo_AnimalZoo" Member="s" ThisKey="ZooId" OtherKey="Id" Type="s" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Zoo" Member="s">
+    <Type Name="s">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Location" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="Zoo_AnimalZoo" Member="AnimalZoos" ThisKey="Id" OtherKey="ZooId" Type="AnimalZoo" />
+    </Type>
+  </Table>
+</Database>
