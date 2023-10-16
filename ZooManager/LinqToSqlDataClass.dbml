@@ -13,14 +13,14 @@
       <Column Name="ZooId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="AnimalId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Association Name="Animal_AnimalZoo" Member="Animal" ThisKey="AnimalId" OtherKey="Id" Type="Animal" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
-      <Association Name="Zoo_AnimalZoo" Member="s" ThisKey="ZooId" OtherKey="Id" Type="s" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="s_AnimalZoo" Member="Zoo" Storage="_s" ThisKey="ZooId" OtherKey="Id" Type="Zoo" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
     </Type>
   </Table>
-  <Table Name="dbo.Zoo" Member="s">
-    <Type Name="s">
+  <Table Name="dbo.Zoo" Member="Zoos">
+    <Type Name="Zoo">
       <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="Location" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
-      <Association Name="Zoo_AnimalZoo" Member="AnimalZoos" ThisKey="Id" OtherKey="ZooId" Type="AnimalZoo" />
+      <Association Name="s_AnimalZoo" Member="AnimalZoos" ThisKey="Id" OtherKey="ZooId" Type="AnimalZoo" />
     </Type>
   </Table>
 </Database>
