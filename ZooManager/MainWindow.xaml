@@ -8,10 +8,10 @@
         Title="MainWindow" Height="500" Width="800">
    <Grid>
       <Label Content="Zoo List" HorizontalAlignment="Left" Margin="30,13,0,0" VerticalAlignment="Top" Width="220"/>
-      <ListBox d:ItemsSource="{d:SampleData ItemCount=5}" Margin="30,61,550,236"/>
+      <ListBox Name="zoosList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="30,61,550,236" SelectionChanged="ZoosList_SelectionChanged"/>
       <Label Content="Assosiated Animals List" HorizontalAlignment="Center" Margin="0,13,0,0" VerticalAlignment="Top" Width="224"/>
-      <ListBox d:ItemsSource="{d:SampleData ItemCount=5}" Margin="288,61,288,236"/>
-      <ListBox d:ItemsSource="{d:SampleData ItemCount=5}" Margin="545,61,35,94"/>
+      <ListBox Name="assosiatedAnimalsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="288,61,288,236"/>
+      <ListBox Name="animalsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="545,61,35,94"/>
       <Button Content="Delete Zoo" HorizontalAlignment="Left" Margin="30,263,0,0" VerticalAlignment="Top" Width="220" Height="35"/>
       <Button Content="Remove Animal" HorizontalAlignment="Center" Margin="0,263,0,0" VerticalAlignment="Top" Width="224" Height="35"/>
       <Button Content="Update Zoo" HorizontalAlignment="Left" Margin="30,413,0,0" VerticalAlignment="Top" Width="220" Height="35"/>

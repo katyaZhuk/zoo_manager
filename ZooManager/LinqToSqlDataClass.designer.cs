@@ -36,9 +36,9 @@ namespace ZooManager
     partial void InsertAnimalZoo(AnimalZoo instance);
     partial void UpdateAnimalZoo(AnimalZoo instance);
     partial void DeleteAnimalZoo(AnimalZoo instance);
-    partial void Inserts(s instance);
-    partial void Updates(s instance);
-    partial void Deletes(s instance);
+    partial void InsertZoo(Zoo instance);
+    partial void UpdateZoo(Zoo instance);
+    partial void DeleteZoo(Zoo instance);
     #endregion
 		
 		public LinqToSqlDataClassDataContext() : 
@@ -87,11 +87,11 @@ namespace ZooManager
 			}
 		}
 		
-		public System.Data.Linq.Table<s> s
+		public System.Data.Linq.Table<Zoo> Zoos
 		{
 			get
 			{
-				return this.GetTable<s>();
+				return this.GetTable<Zoo>();
 			}
 		}
 	}
@@ -224,7 +224,7 @@ namespace ZooManager
 		
 		private EntityRef<Animal> _Animal;
 		
-		private EntityRef<s> _s;
+		private EntityRef<Zoo> _s;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -241,7 +241,7 @@ namespace ZooManager
 		public AnimalZoo()
 		{
 			this._Animal = default(EntityRef<Animal>);
-			this._s = default(EntityRef<s>);
+			this._s = default(EntityRef<Zoo>);
 			OnCreated();
 		}
 		
@@ -347,8 +347,8 @@ namespace ZooManager
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Zoo_AnimalZoo", Storage="_s", ThisKey="ZooId", OtherKey="Id", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
-		public s s
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="s_AnimalZoo", Storage="_s", ThisKey="ZooId", OtherKey="Id", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public Zoo Zoo
 		{
 			get
 			{
@@ -356,7 +356,7 @@ namespace ZooManager
 			}
 			set
 			{
-				s previousValue = this._s.Entity;
+				Zoo previousValue = this._s.Entity;
 				if (((previousValue != value) 
 							|| (this._s.HasLoadedOrAssignedValue == false)))
 				{
@@ -376,7 +376,7 @@ namespace ZooManager
 					{
 						this._ZooId = default(int);
 					}
-					this.SendPropertyChanged("s");
+					this.SendPropertyChanged("Zoo");
 				}
 			}
 		}
@@ -403,7 +403,7 @@ namespace ZooManager
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Zoo")]
-	public partial class s : INotifyPropertyChanging, INotifyPropertyChanged
+	public partial class Zoo : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
@@ -424,7 +424,7 @@ namespace ZooManager
     partial void OnLocationChanged();
     #endregion
 		
-		public s()
+		public Zoo()
 		{
 			this._AnimalZoos = new EntitySet<AnimalZoo>(new Action<AnimalZoo>(this.attach_AnimalZoos), new Action<AnimalZoo>(this.detach_AnimalZoos));
 			OnCreated();
@@ -470,7 +470,7 @@ namespace ZooManager
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Zoo_AnimalZoo", Storage="_AnimalZoos", ThisKey="Id", OtherKey="ZooId")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="s_AnimalZoo", Storage="_AnimalZoos", ThisKey="Id", OtherKey="ZooId")]
 		public EntitySet<AnimalZoo> AnimalZoos
 		{
 			get
@@ -506,13 +506,13 @@ namespace ZooManager
 		private void attach_AnimalZoos(AnimalZoo entity)
 		{
 			this.SendPropertyChanging();
-			entity.s = this;
+			entity.Zoo = this;
 		}
 		
 		private void detach_AnimalZoos(AnimalZoo entity)
 		{
 			this.SendPropertyChanging();
-			entity.s = null;
+			entity.Zoo = null;
 		}
 	}
 }
