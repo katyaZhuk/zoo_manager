@@ -19,7 +19,9 @@ namespace ZooManager
       {
          InitializeComponent();
 
-         string connectionString = ConfigurationManager.ConnectionStrings["ZooManager.Properties.Settings.SqlTutorialDBConnectionString"].ConnectionString;
+         string connectionString = ConfigurationManager
+            .ConnectionStrings["ZooManager.Properties.Settings.SqlTutorialDBConnectionString"]
+            .ConnectionString;
 
          _dataContext = new LinqToSqlDataClassDataContext(connectionString);
 
@@ -48,9 +50,35 @@ namespace ZooManager
          animalsList.ItemsSource = _dataContext.Animals.Select(animal => animal.Name);
       }
 
+      private void ShowSelectedZooInTextBox()
+      {
+         addZooTextBox.Text = zoosList.SelectedValue.ToString();
+      }
+
+      private void ShowSelectedAnimalInTextBox()
+      {
+         addAnimalTextBox.Text = animalsList.SelectedValue.ToString();
+      }
+
       private void ZoosList_SelectionChanged(object sender, SelectionChangedEventArgs e)
       {
          ShowAssosiatedAnimals();
+         ShowSelectedZooInTextBox();
+      }
+
+      private void AnimalsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+      {
+         ShowSelectedAnimalInTextBox();
+      }
+
+      private void AddZoo_Click(object sender, RoutedEventArgs e)
+      {
+         string newZoo = addZooTextBox.Text;
+         _dataContext.Zoos.InsertOnSubmit(new Zoo { Location = newZoo });
+
+         _dataContext.SubmitChanges();
+
+         ShowZoos();
       }
    }
 }
