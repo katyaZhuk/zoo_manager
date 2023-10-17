@@ -36,13 +36,20 @@ namespace ZooManager
 
       private void ShowAssosiatedAnimals()
       {
-         var animals = from a in _dataContext.Animals
-                       join az in _dataContext.AnimalZoos
-                       on a.Id equals az.AnimalId
-                       where az.Zoo.Location == zoosList.SelectedValue.ToString()
-                       select a.Name;
+         if (zoosList.SelectedValue != null)
+         {
+            var animals = from a in _dataContext.Animals
+                          join az in _dataContext.AnimalZoos
+                          on a.Id equals az.AnimalId
+                          where az.Zoo.Location == zoosList.SelectedValue.ToString()
+                          select a.Name;
 
-         assosiatedAnimalsList.ItemsSource = animals;
+            assosiatedAnimalsList.ItemsSource = animals;
+         }
+         else
+         {
+            assosiatedAnimalsList.ItemsSource = null;
+         }
       }
 
       private void ShowAnimals()
@@ -52,12 +59,18 @@ namespace ZooManager
 
       private void ShowSelectedZooInTextBox()
       {
-         addZooTextBox.Text = zoosList.SelectedValue.ToString();
+         if (zoosList.SelectedValue != null)
+         {
+            addZooTextBox.Text = zoosList.SelectedValue.ToString();
+         }
       }
 
       private void ShowSelectedAnimalInTextBox()
       {
-         addAnimalTextBox.Text = animalsList.SelectedValue.ToString();
+         if (animalsList.SelectedValue != null)
+         {
+            addAnimalTextBox.Text = animalsList.SelectedValue.ToString();
+         }
       }
 
       private void ZoosList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -74,6 +87,13 @@ namespace ZooManager
       private void AddZoo_Click(object sender, RoutedEventArgs e)
       {
          string newZoo = addZooTextBox.Text;
+
+         if (IsZooDuplicate(newZoo))
+         {
+            MessageBox.Show($"The Zoo in {newZoo} is already in the list");
+            return;
+         }
+
          _dataContext.Zoos.InsertOnSubmit(new Zoo { Location = newZoo });
 
          _dataContext.SubmitChanges();
@@ -84,6 +104,13 @@ namespace ZooManager
       private void AddAnimal_Click(object sender, RoutedEventArgs e)
       {
          string newAnimal = addAnimalTextBox.Text;
+
+         if (IsAnimalDuplicate(newAnimal))
+         {
+            MessageBox.Show($"The {newAnimal} is already in the list");
+            return;
+         }
+
          _dataContext.Animals.InsertOnSubmit(new Animal { Name = newAnimal });
 
          _dataContext.SubmitChanges();
@@ -93,14 +120,57 @@ namespace ZooManager
 
       private void AddAnimalToZoo_Click(object sender, RoutedEventArgs e)
       {
-         Zoo selectedZoo = new Zoo { Location = zoosList.SelectedValue.ToString() };
-         Animal selectedAnimal = new Animal { Name = animalsList.SelectedValue.ToString() };
+         Zoo selectedZoo = _dataContext.Zoos.FirstOrDefault(zoo => zoo.Location.Equals(zoosList.SelectedValue));
+         Animal selectedAnimal = _dataContext.Animals.FirstOrDefault(zoo => zoo.Name.Equals(animalsList.SelectedValue));
 
          _dataContext.AnimalZoos.InsertOnSubmit(new AnimalZoo { Zoo = selectedZoo, Animal = selectedAnimal });
 
          _dataContext.SubmitChanges();
 
          ShowAssosiatedAnimals();
+      }
+
+      private void DeleteZoo_Click(object sender, RoutedEventArgs e)
+      {
+         Zoo selectedZoo = _dataContext.Zoos.FirstOrDefault(zoo => zoo.Location.Equals(zoosList.SelectedValue));
+         _dataContext.Zoos.DeleteOnSubmit(selectedZoo);
+
+         _dataContext.SubmitChanges();
+
+         ShowZoos();
+      }
+
+      private void RemoveAnimalFromZoo_Click(object sender, RoutedEventArgs e)
+      {
+         Zoo selectedZoo = _dataContext.Zoos.FirstOrDefault(zoo => zoo.Location.Equals(zoosList.SelectedValue));
+         AnimalZoo selectedAnimalZoo = _dataContext.AnimalZoos
+            .FirstOrDefault(az => az.Zoo.Equals(selectedZoo) && az.Animal.Name.Equals(assosiatedAnimalsList.SelectedValue));
+
+         _dataContext.AnimalZoos.DeleteOnSubmit(selectedAnimalZoo);
+
+         _dataContext.SubmitChanges();
+
+         ShowAssosiatedAnimals();
+      }
+
+      private void DeleteAnimal_Click(object sender, RoutedEventArgs e)
+      {
+         Animal selectedAnimal = _dataContext.Animals.FirstOrDefault(a => a.Name.Equals(animalsList.SelectedValue));
+         _dataContext.Animals.DeleteOnSubmit(selectedAnimal);
+
+         _dataContext.SubmitChanges();
+
+         ShowAnimals();
+      }
+
+      private bool IsZooDuplicate(string newZoo)
+      {
+         return _dataContext.Zoos.Any(zoo => zoo.Location == newZoo);
+      }
+
+      private bool IsAnimalDuplicate(string newAnimal)
+      {
+         return _dataContext.Animals.Any(a => a.Name == newAnimal);
       }
    }
 }
