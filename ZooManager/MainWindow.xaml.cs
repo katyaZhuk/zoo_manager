@@ -33,21 +33,20 @@ namespace ZooManager
 
       private void ShowAssosiatedAnimals()
       {
-         if (zoosList.SelectedValue != null)
-         {
-            var animals = from a in _dataContext.Animals
-                          join az in _dataContext.AnimalZoos
-                          on a.Id equals az.AnimalId
-                          where az.Zoo.Location == zoosList.SelectedValue.ToString()
-                          select a.Name;
-
-            assosiatedAnimalsList.ItemsSource = animals;
-         }
-         else
+         if (zoosList.SelectedValue == null)
          {
             assosiatedAnimalsList.ItemsSource = null;
             ShowDefaultValueInAnimalTextBox();
+            return;
          }
+
+         var animals = from a in _dataContext.Animals
+                       join az in _dataContext.AnimalZoos
+                       on a.Id equals az.AnimalId
+                       where az.Zoo.Location == zoosList.SelectedValue.ToString()
+                       select a.Name;
+
+         assosiatedAnimalsList.ItemsSource = animals;
       }
 
       private void ShowAnimals()
@@ -101,6 +100,7 @@ namespace ZooManager
             _dataContext.SubmitChanges();
 
             ShowZoos();
+            ShowDefaultValueInZooTextBox();
          }
       }
 
@@ -123,164 +123,160 @@ namespace ZooManager
             _dataContext.SubmitChanges();
 
             ShowAnimals();
+            ShowDefaultValueInAnimalTextBox();
          }
       }
 
       private void AddAnimalToZoo_Click(object sender, RoutedEventArgs e)
       {
-         if (zoosList.SelectedValue != null && animalsList.SelectedValue != null)
-         {
-
-            Zoo selectedZoo = _dataContext.Zoos.FirstOrDefault(zoo => zoo.Location.Equals(zoosList.SelectedValue));
-            Animal selectedAnimal = _dataContext.Animals.FirstOrDefault(zoo => zoo.Name.Equals(animalsList.SelectedValue));
-
-            _dataContext.AnimalZoos.InsertOnSubmit(new AnimalZoo { Zoo = selectedZoo, Animal = selectedAnimal });
-
-            _dataContext.SubmitChanges();
-
-            ShowAssosiatedAnimals();
-         }
-         else
+         if (zoosList.SelectedValue == null && animalsList.SelectedValue == null)
          {
             MessageBox.Show("Please, select Zoo location and Animal to add");
+            return;
          }
+
+         Zoo selectedZoo = _dataContext.Zoos.FirstOrDefault(zoo => zoo.Location.Equals(zoosList.SelectedValue));
+         Animal selectedAnimal = _dataContext.Animals.FirstOrDefault(zoo => zoo.Name.Equals(animalsList.SelectedValue));
+
+         _dataContext.AnimalZoos.InsertOnSubmit(new AnimalZoo { Zoo = selectedZoo, Animal = selectedAnimal });
+
+         _dataContext.SubmitChanges();
+
+         ShowAssosiatedAnimals();
       }
 
       private void DeleteZoo_Click(object sender, RoutedEventArgs e)
       {
-         if (zoosList.SelectedValue != null)
+         if (zoosList.SelectedValue == null)
          {
-            Zoo selectedZoo = _dataContext.Zoos.FirstOrDefault(zoo => zoo.Location.Equals(zoosList.SelectedValue));
+            MessageBox.Show("Please, select Zoo to remove");
+            return;
+         }
 
-            if (ShowDeleteConfirmationBox() == MessageBoxResult.Yes)
-            {
-               _dataContext.Zoos.DeleteOnSubmit(selectedZoo);
+         Zoo selectedZoo = _dataContext.Zoos.FirstOrDefault(zoo => zoo.Location.Equals(zoosList.SelectedValue));
 
-               _dataContext.SubmitChanges();
+         if (ShowDeleteConfirmationBox() == MessageBoxResult.Yes)
+         {
+            _dataContext.Zoos.DeleteOnSubmit(selectedZoo);
 
-               ShowZoos();
-               ShowDefaultValueInZooTextBox();
-            }
-            else
-            {
-               MessageBox.Show("Delete operation terminated");
-            }
+            _dataContext.SubmitChanges();
+
+            ShowZoos();
+            ShowDefaultValueInZooTextBox();
          }
          else
          {
-            MessageBox.Show("Please, select Zoo to remove");
+            MessageBox.Show("Delete operation terminated");
          }
       }
 
       private void RemoveAnimalFromZoo_Click(object sender, RoutedEventArgs e)
       {
-         if (zoosList.SelectedValue != null && assosiatedAnimalsList.SelectedValue != null)
+         if (zoosList.SelectedValue == null && assosiatedAnimalsList.SelectedValue == null)
          {
-            Zoo selectedZoo = _dataContext.Zoos.FirstOrDefault(zoo => zoo.Location.Equals(zoosList.SelectedValue));
-            AnimalZoo selectedAnimalZoo = _dataContext.AnimalZoos
-               .FirstOrDefault(az => az.Zoo.Equals(selectedZoo) && az.Animal.Name.Equals(assosiatedAnimalsList.SelectedValue));
+            MessageBox.Show("Please, select Zoo location and Animal to remove");
+            return;
+         }
 
-            if (ShowDeleteConfirmationBox() == MessageBoxResult.Yes)
-            {
-               _dataContext.AnimalZoos.DeleteOnSubmit(selectedAnimalZoo);
+         Zoo selectedZoo = _dataContext.Zoos.FirstOrDefault(zoo => zoo.Location.Equals(zoosList.SelectedValue));
+         AnimalZoo selectedAnimalZoo = _dataContext.AnimalZoos
+            .FirstOrDefault(az => az.Zoo.Equals(selectedZoo) && az.Animal.Name.Equals(assosiatedAnimalsList.SelectedValue));
 
-               _dataContext.SubmitChanges();
+         if (ShowDeleteConfirmationBox() == MessageBoxResult.Yes)
+         {
+            _dataContext.AnimalZoos.DeleteOnSubmit(selectedAnimalZoo);
 
-               ShowAssosiatedAnimals();
-               ShowDefaultValueInAnimalTextBox();
-            }
-            else
-            {
-               MessageBox.Show("Delete operation terminated");
-            }
+            _dataContext.SubmitChanges();
+
+            ShowAssosiatedAnimals();
+            ShowDefaultValueInAnimalTextBox();
          }
          else
          {
-            MessageBox.Show("Please, select Zoo location and Animal to remove");
+            MessageBox.Show("Delete operation terminated");
          }
       }
 
       private void DeleteAnimal_Click(object sender, RoutedEventArgs e)
       {
-         if (animalsList.SelectedValue != null)
-         {
-            Animal selectedAnimal = _dataContext.Animals.FirstOrDefault(a => a.Name.Equals(animalsList.SelectedValue));
-
-            if (ShowDeleteConfirmationBox() == MessageBoxResult.Yes)
-            {
-
-               _dataContext.Animals.DeleteOnSubmit(selectedAnimal);
-
-               _dataContext.SubmitChanges();
-
-               ShowAnimals();
-               ShowAssosiatedAnimals();
-               ShowDefaultValueInAnimalTextBox();
-            }
-            else
-            {
-               MessageBox.Show("Delete operation terminated");
-            }
-         }
-         else
+         if (animalsList.SelectedValue == null)
          {
             MessageBox.Show("Please, select Animal to delete");
+            return;
          }
-      }
 
-      private void UpdateZoo_Click(object sender, RoutedEventArgs e)
-      {
-         if (zoosList.SelectedValue != null)
+         Animal selectedAnimal = _dataContext.Animals.FirstOrDefault(a => a.Name.Equals(animalsList.SelectedValue));
+
+         if (ShowDeleteConfirmationBox() == MessageBoxResult.Yes)
          {
-            string initialZooLocation = zoosList.SelectedValue.ToString();
-            string updatedZoo = addZooTextBox.Text;
 
-            if (IsZooDuplicate(updatedZoo))
-            {
-               MessageBox.Show($"The Zoo in {updatedZoo} is already in the list");
-               return;
-            }
-
-            Zoo initialZoo = _dataContext.Zoos.FirstOrDefault(zoo => zoo.Location == initialZooLocation);
-
-            initialZoo.Location = updatedZoo;
-
-            _dataContext.SubmitChanges();
-
-            ShowZoos();
-         }
-         else
-         {
-            MessageBox.Show("Please, select Zoo to update");
-         }
-      }
-
-      private void UpdateAnimal_Click(object sender, RoutedEventArgs e)
-      {
-         if (animalsList.SelectedValue != null)
-         {
-            string initialAnimalName = animalsList.SelectedValue.ToString();
-            string updatedAnimal = addAnimalTextBox.Text;
-
-            if (IsAnimalDuplicate(updatedAnimal))
-            {
-               MessageBox.Show($"{updatedAnimal} is already in the list");
-               return;
-            }
-
-            Animal initialAnimal = _dataContext.Animals.FirstOrDefault(an => an.Name == initialAnimalName);
-
-            initialAnimal.Name = updatedAnimal;
+            _dataContext.Animals.DeleteOnSubmit(selectedAnimal);
 
             _dataContext.SubmitChanges();
 
             ShowAnimals();
             ShowAssosiatedAnimals();
+            ShowDefaultValueInAnimalTextBox();
          }
          else
          {
-            MessageBox.Show("Please, select Animal to update");
+            MessageBox.Show("Delete operation terminated");
          }
+      }
+
+      private void UpdateZoo_Click(object sender, RoutedEventArgs e)
+      {
+         if (zoosList.SelectedValue == null)
+         {
+            MessageBox.Show("Please, select Zoo to update");
+            return;
+         }
+
+         string initialZooLocation = zoosList.SelectedValue.ToString();
+         string updatedZoo = addZooTextBox.Text;
+
+         if (IsZooDuplicate(updatedZoo))
+         {
+            MessageBox.Show($"The Zoo in {updatedZoo} is already in the list");
+            return;
+         }
+
+         Zoo initialZoo = _dataContext.Zoos.FirstOrDefault(zoo => zoo.Location == initialZooLocation);
+
+         initialZoo.Location = updatedZoo;
+
+         _dataContext.SubmitChanges();
+
+         ShowZoos();
+         ShowDefaultValueInZooTextBox();
+      }
+
+      private void UpdateAnimal_Click(object sender, RoutedEventArgs e)
+      {
+         if (animalsList.SelectedValue == null)
+         {
+            MessageBox.Show("Please, select Animal to update");
+            return;
+         }
+
+         string initialAnimalName = animalsList.SelectedValue.ToString();
+         string updatedAnimal = addAnimalTextBox.Text;
+
+         if (IsAnimalDuplicate(updatedAnimal))
+         {
+            MessageBox.Show($"{updatedAnimal} is already in the list");
+            return;
+         }
+
+         Animal initialAnimal = _dataContext.Animals.FirstOrDefault(an => an.Name == initialAnimalName);
+
+         initialAnimal.Name = updatedAnimal;
+
+         _dataContext.SubmitChanges();
+
+         ShowAnimals();
+         ShowDefaultValueInAnimalTextBox();
+         ShowAssosiatedAnimals();
       }
 
       private bool IsZooDuplicate(string newZoo)
